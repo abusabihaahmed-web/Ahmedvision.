@@ -1,3 +1,4 @@
+
 package com.ahmedvision.app
 
 import android.os.Bundle
@@ -23,64 +24,162 @@ import androidx.compose.ui.unit.sp
 private val navy = Color(0xFF071336)
 private val purple = Color(0xFF8424CB)
 private val gold = Color(0xFFFFC76B)
-private val entries = listOf("📺" to "القنوات المباشرة", "🎬" to "الأفلام", "🎞" to "المسلسلات", "⚽" to "الرياضة", "🧒" to "قنوات الأطفال", "⭐" to "المفضلة", "🔎" to "بحث", "🔄" to "تحديث المحتوى", "📅" to "دليل البرامج")
+
+private val sections = listOf(
+    "📺" to "القنوات المباشرة",
+    "🎬" to "الأفلام",
+    "🎞" to "المسلسلات",
+    "⚽" to "الرياضة",
+    "🧒" to "قنوات الأطفال",
+    "⭐" to "المفضلة"
+)
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) { super.onCreate(savedInstanceState); setContent { AhmedVisionApp() } }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            AhmedVisionApp()
+        }
+    }
 }
 
 @Composable
 fun AhmedVisionApp() {
-    var screen by remember { mutableStateOf("home") }
-    var method by remember { mutableStateOf("xtream") }
-    var server by remember { mutableStateOf("") }
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var code by remember { mutableStateOf("") }
-    val colors = listOf(Color(0xFF6A22B9), Color(0xFF0764D7), Color(0xFFCB176B), Color(0xFF009DAB), Color(0xFFED8A17), Color(0xFF7534C4))
-    MaterialTheme(colorScheme = darkColorScheme(primary = gold, background = navy, surface = Color(0xFF12244B))) {
-        Column(modifier = Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color(0xFF081135), Color(0xFF17265C), Color(0xFF130C36)))).padding(20.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("📺 Ahmed Vision", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = gold)
-                Spacer(Modifier.weight(1f))
-                TextButton(onClick = { screen = if (screen == "login") "home" else "login" }) { Text(if (screen == "login") "الرئيسية" else "تسجيل الدخول") }
-            }
-            Spacer(Modifier.height(24.dp))
-            if (screen == "home") {
-                Text("أهلًا بك في Ahmed Vision", color = Color.White, fontSize = 24.sp)
-                Text("واجهة تجريبية — اربط اشتراكك المرخّص لتظهر المحتويات", color = Color.LightGray)
-                Spacer(Modifier.height(20.dp))
-                LazyVerticalGrid(columns = GridCells.Adaptive(155.dp), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    items(entries) { entry ->
-                        val index = entries.indexOf(entry)
-                        Column(modifier = Modifier.height(145.dp).background(Brush.verticalGradient(listOf(colors[index % colors.size], navy)), RoundedCornerShape(20.dp)).border(1.dp, gold.copy(alpha = .35f), RoundedCornerShape(20.dp)).clickable { screen = entry.second }.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                            Text(entry.first, fontSize = 35.sp)
-                            Spacer(Modifier.height(10.dp))
-                            Text(entry.second, color = Color.White, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+    var selected by remember {
+        mutableStateOf("الرئيسية")
+    }
+
+    MaterialTheme(
+        colorScheme = darkColorScheme(
+            primary = gold,
+            background = navy
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(navy, purple, navy)
+                    )
+                )
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "AHMED VISION",
+                color = gold,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(Modifier.height(20.dp))
+
+            if (selected == "الرئيسية") {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            Color(0xFF202052),
+                            RoundedCornerShape(20.dp)
+                        )
+                        .padding(24.dp),
+                    horizontalAlignment =
+                        Alignment.CenterHorizontally
+                ) {
+                    Text("🕌", fontSize = 65.sp)
+
+                    Text(
+                        "أهلاً بك في أحمد فيجن",
+                        color = Color.White,
+                        fontSize = 23.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Text(
+                        "عالم الترفيه بين يديك",
+                        color = gold,
+                        fontSize = 16.sp
+                    )
+                }
+
+                Spacer(Modifier.height(24.dp))
+
+                Text(
+                    "الأقسام",
+                    color = Color.White,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(Modifier.height(12.dp))
+
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    horizontalArrangement =
+                        Arrangement.spacedBy(12.dp),
+                    verticalArrangement =
+                        Arrangement.spacedBy(12.dp)
+                ) {
+                    items(sections) { section ->
+                        Column(
+                            modifier = Modifier
+                                .height(135.dp)
+                                .background(
+                                    Color(0xFF34246C),
+                                    RoundedCornerShape(18.dp)
+                                )
+                                .clickable {
+                                    selected = section.second
+                                }
+                                .padding(12.dp),
+                            horizontalAlignment =
+                                Alignment.CenterHorizontally,
+                            verticalArrangement =
+                                Arrangement.Center
+                        ) {
+                            Text(
+                                section.first,
+                                fontSize = 38.sp
+                            )
+
+                            Spacer(Modifier.height(8.dp))
+
+                            Text(
+                                section.second,
+                                color = Color.White,
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center
+                            )
                         }
                     }
                 }
-            } else if (screen == "login") {
-                Text("تسجيل الدخول", color = Color.White, fontSize = 26.sp, fontWeight = FontWeight.Bold)
-                Row { FilterChip(selected = method == "xtream", onClick = { method = "xtream" }, label = { Text("Xtream") }); Spacer(Modifier.width(10.dp)); FilterChip(selected = method == "code", onClick = { method = "code" }, label = { Text("كود التفعيل") }) }
-                Spacer(Modifier.height(12.dp))
-                if (method == "xtream") {
-                    OutlinedTextField(server, { server = it }, label = { Text("رابط الخادم HTTPS") }, singleLine = true)
-                    OutlinedTextField(username, { username = it }, label = { Text("اسم المستخدم") }, singleLine = true)
-                    OutlinedTextField(password, { password = it }, label = { Text("كلمة المرور") }, singleLine = true, visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation())
-                    Text("الاتصال بالخادم قيد التطوير؛ لا تُدخل بيانات حقيقية في هذه النسخة التجريبية.", color = Color.LightGray)
-                } else {
-                    OutlinedTextField(code, { code = it }, label = { Text("كود التفعيل") }, singleLine = true)
-                    Text("تفعيل الأكواد يتطلب خادم إدارة اشتراكات؛ غير متصل حاليًا.", color = Color.LightGray)
-                }
-                Spacer(Modifier.height(16.dp))
-                Button(onClick = {}, enabled = false) { Text("اتصال — قريبًا") }
             } else {
-                Text(screen, color = gold, fontSize = 26.sp)
-                Spacer(Modifier.height(12.dp))
-                Text("سيظهر المحتوى هنا بعد ربط الخادم والتحقق من الاشتراك.", color = Color.White)
-                Spacer(Modifier.height(12.dp))
-                Button(onClick = { screen = "home" }) { Text("العودة للرئيسية") }
+                Text(
+                    selected,
+                    color = gold,
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(Modifier.height(20.dp))
+
+                Text(
+                    "سيتم إضافة المحتوى هنا",
+                    color = Color.White
+                )
+
+                Spacer(Modifier.height(20.dp))
+
+                Button(
+                    onClick = {
+                        selected = "الرئيسية"
+                    }
+                ) {
+                    Text("العودة للرئيسية")
+                }
             }
         }
     }
