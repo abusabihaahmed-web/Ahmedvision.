@@ -6,9 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -37,17 +35,16 @@ private val sections = listOf(
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            AhmedVisionApp()
-        }
+        setContent { AhmedVisionApp() }
     }
 }
 
 @Composable
 fun AhmedVisionApp() {
-    var selected by remember {
-        mutableStateOf("الرئيسية")
-    }
+    var selected by remember { mutableStateOf("الرئيسية") }
+    var showAddUser by remember { mutableStateOf(false) }
+    var userName by remember { mutableStateOf("") }
+    var savedUser by remember { mutableStateOf("") }
 
     MaterialTheme(
         colorScheme = darkColorScheme(
@@ -63,18 +60,18 @@ fun AhmedVisionApp() {
                         listOf(navy, purple, navy)
                     )
                 )
-                .padding(16.dp)
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "AHMED VISION",
+                "AHMED VISION",
                 color = gold,
                 fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                fontWeight = FontWeight.Bold
             )
 
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(16.dp))
 
             if (selected == "الرئيسية") {
                 Column(
@@ -84,19 +81,17 @@ fun AhmedVisionApp() {
                             Color(0xFF202052),
                             RoundedCornerShape(20.dp)
                         )
-                        .padding(24.dp),
-                    horizontalAlignment =
-                        Alignment.CenterHorizontally
+                        .padding(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text("🕌", fontSize = 65.sp)
-
                     Text(
                         "أهلاً بك في أحمد فيجن",
                         color = Color.White,
                         fontSize = 23.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
                     )
-
                     Text(
                         "عالم الترفيه بين يديك",
                         color = gold,
@@ -104,7 +99,23 @@ fun AhmedVisionApp() {
                     )
                 }
 
-                Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(16.dp))
+
+                Button(
+                    onClick = { showAddUser = true },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("➕ إضافة مستخدم")
+                }
+
+                if (savedUser.isNotBlank()) {
+                    Text(
+                        "المستخدم: $savedUser",
+                        color = Color.White
+                    )
+                }
+
+                Spacer(Modifier.height(20.dp))
 
                 Text(
                     "الأقسام",
@@ -117,15 +128,15 @@ fun AhmedVisionApp() {
 
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
-                    horizontalArrangement =
-                        Arrangement.spacedBy(12.dp),
-                    verticalArrangement =
-                        Arrangement.spacedBy(12.dp)
+                    modifier = Modifier.height(455.dp),
+                    userScrollEnabled = false,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(sections) { section ->
                         Column(
                             modifier = Modifier
-                                .height(135.dp)
+                                .height(140.dp)
                                 .background(
                                     Color(0xFF34246C),
                                     RoundedCornerShape(18.dp)
@@ -134,18 +145,11 @@ fun AhmedVisionApp() {
                                     selected = section.second
                                 }
                                 .padding(12.dp),
-                            horizontalAlignment =
-                                Alignment.CenterHorizontally,
-                            verticalArrangement =
-                                Arrangement.Center
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
                         ) {
-                            Text(
-                                section.first,
-                                fontSize = 38.sp
-                            )
-
+                            Text(section.first, fontSize = 38.sp)
                             Spacer(Modifier.height(8.dp))
-
                             Text(
                                 section.second,
                                 color = Color.White,
@@ -160,27 +164,65 @@ fun AhmedVisionApp() {
                 Text(
                     selected,
                     color = gold,
-                    fontSize = 25.sp,
-                    fontWeight = FontWeight.Bold
+                    fontSize = 25.sp
                 )
 
                 Spacer(Modifier.height(20.dp))
 
                 Text(
-                    "سيتم إضافة المحتوى هنا",
+                    "لم تتم إضافة مصادر محتوى بعد",
                     color = Color.White
                 )
 
                 Spacer(Modifier.height(20.dp))
 
-                Button(
-                    onClick = {
-                        selected = "الرئيسية"
-                    }
-                ) {
+                Button(onClick = {
+                    selected = "الرئيسية"
+                }) {
                     Text("العودة للرئيسية")
                 }
             }
         }
+
+        if (showAddUser) {
+            AlertDialog(
+                onDismissRequest = {
+                    showAddUser = false
+                },
+                title = {
+                    Text("إضافة مستخدم")
+                },
+                text = {
+                    OutlinedTextField(
+                        value = userName,
+                        onValueChange = {
+                            userName = it
+                        },
+                        label = {
+                            Text("اسم المستخدم")
+                        },
+                        singleLine = true
+                    )
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        if (userName.isNotBlank()) {
+                            savedUser = userName.trim()
+                            showAddUser = false
+                        }
+                    }) {
+                        Text("إضافة")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = {
+                        showAddUser = false
+                    }) {
+                        Text("إلغاء")
+                    }
+                }
+            )
+        }
     }
 }
+
